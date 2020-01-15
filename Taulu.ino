@@ -11,6 +11,7 @@ boolean started;
 long aika,aika2,aika3;
 int leds[5]={3,5,9,6,10};
 long tauko,tauko2;
+uint8_t valo;
 
 void setup() {
   // put your setup code here, to run once:
