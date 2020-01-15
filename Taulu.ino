@@ -7,7 +7,7 @@
 #define brightness 255
 //int brightness;
 int light;
-boolean started;
+boolean started,onoff;
 long aika,aika2,aika3;
 int leds[5]={3,5,9,6,10};
 long tauko,tauko2;
@@ -33,7 +33,11 @@ void loop() {
 light = analogRead(0); //read the brightness of the room where the painting is
 //brightness=analogRead(1)/4;
 Serial.println(String(light)); //more debugging
-if(light<550){ //if it is dark enought start the lights
+if(light<550)onoff=true;//if it is dark enough turn on the lights
+if(light>600)onoff=false; //if it is light enough turn off the lights
+//There should be a little difference in starting and stopping brighness so it won't turn on and off constantly, if brightness is near the limit.
+
+if(onoff){
   if(!started){ //if starting up
     delay(5000); 
     for(int i=0;i<brightness;i+=5){ //light the leds slowly using pwm
@@ -136,7 +140,7 @@ if(light<550){ //if it is dark enought start the lights
       analogWrite(leds[4],brightness);
     }
    }
-  }else  if(light>600){ //There should be a little difference in starting and stopping brighness so it won't turn on and off if brightness is near the limit.
+  }else{ 
     started=false; //turn off lights.
     analogWrite(Led1,0);
     analogWrite(Led2,0);
