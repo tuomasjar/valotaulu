@@ -11,37 +11,36 @@ boolean started;
 long aika,aika2,aika3;
 int leds[5]={3,5,9,6,10};
 long tauko,tauko2;
-uint8_t valo;
 
 void setup() {
   // put your setup code here, to run once:
-Serial.begin(9600);
-pinMode(13,OUTPUT);
+Serial.begin(9600); //for debugging reasons
+pinMode(13,OUTPUT); //initialise led pins
 pinMode(Led1,OUTPUT);
 pinMode(Led2,OUTPUT);
 pinMode(Led3,OUTPUT);
 pinMode(Led4,OUTPUT);
 pinMode(Led5,OUTPUT);
-//brightness = analogRead(1)/4;
+//brightness = analogRead(1)/4; //for brightness control add a potentiometer to A1 pin
 started=false;
-tauko=random(300000,600000);
-tauko2=random(3600000,7200000);
-Serial.println("Begin");
+tauko=random(300000,600000); //first easter egg in 5-10 minutes
+tauko2=random(3600000,7200000); //second easter egg between 1-2 hours
+Serial.println("Begin"); //debugging
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-light = analogRead(0);
+light = analogRead(0); //read the brightness of the room where the painting is
 //brightness=analogRead(1)/4;
-Serial.println(String(light));
-if(light<550){
-  if(!started){
-    delay(5000);
-    for(int i=0;i<brightness;i+=5){
+Serial.println(String(light)); //more debugging
+if(light<550){ //if it is dark enought start the lights
+  if(!started){ //if starting up
+    delay(5000); 
+    for(int i=0;i<brightness;i+=5){ //light the leds slowly using pwm
       analogWrite(Led1,i);
       delay(100);
     }
-    delay(random(1000,10000));
+    delay(random(1000,10000)); //random delay between the lights
     for(int i=0;i<brightness;i+=5){
       analogWrite(Led2,i);
       delay(100);
@@ -61,12 +60,12 @@ if(light<550){
       analogWrite(Led5,i);
       delay(100);
     }
-    started=true;
-    aika=millis();  
-  }else{
-    if(millis()-aika>tauko){
-      int i=random(0,4);
-      analogWrite(leds[i],0);
+    started=true; //the starting process is done. no need to do it again.
+    aika=millis(); //reset timer.
+  }else{ //if the starting has already been done keep an eye on timer to do the easter eggs
+    if(millis()-aika>tauko){ //if timer1 has had enought time
+      int i=random(0,4); //choose a led at random
+      analogWrite(leds[i],0); //blink it randomly
       delay(random(250,1000));
       analogWrite(leds[i],brightness);
       delay(random(250,1000));
@@ -89,10 +88,10 @@ if(light<550){
       analogWrite(leds[i],0);
       delay(random(250,1000));
       analogWrite(leds[i],brightness);
-      tauko=random(300000,600000);
-      aika=millis();
-    }else if(millis()-aika2>tauko2){
-      for(int i=0;i<4;i++){
+      tauko=random(300000,600000); //new random time for the next one
+      aika=millis(); //reset timer
+    }else if(millis()-aika2>tauko2){ //if timer2 has had enought time
+      for(int i=0;i<4;i++){ //blink all the leds in order
         analogWrite(leds[0],0);
         delay(500);
         analogWrite(leds[0],brightness);
@@ -127,9 +126,9 @@ if(light<550){
         delay(500);
         analogWrite(leds[0],brightness);
       }
-      tauko2=random(3600000,7200000);
-      aika2=millis();
-    }else{
+      tauko2=random(3600000,7200000); //new random time for the next one
+      aika2=millis(); //reset timer
+    }else{ //keep the lights on
       analogWrite(leds[0],brightness);
       analogWrite(leds[1],brightness);
       analogWrite(leds[2],brightness);
@@ -137,12 +136,15 @@ if(light<550){
       analogWrite(leds[4],brightness);
     }
    }
-  }else  if(light>650){
-    started=false;
+  }else  if(light>600){ //There should be a little difference in starting and stopping brighness so it won't turn on and off if brightness is near the limit.
+    started=false; //turn off lights.
     analogWrite(Led1,0);
     analogWrite(Led2,0);
     analogWrite(Led3,0);
     analogWrite(Led4,0);
     analogWrite(Led5,0);
+    aika=millis();
+    aika2=millis();
   }
+  
 }
